@@ -1,14 +1,27 @@
 function renameFiles(names) {
-  const counts = {};
-  return names.map(name => {
-    if (counts[name]) {
-      const newName = `${name}(${counts[name]})`;
-      counts[newName] = (counts[newName] || 0) + 1;
-      return newName;
+  let countMap = {};
+  let result = [];
+
+  for (let i = 0; i < names.length; i++) {
+    let name = names[i];
+    if (countMap[name] === undefined) {
+      countMap[name] = 1;
+      result.push(name);
+    } else {
+      
+      let newName = `${name}(${countMap[name]})`;
+      
+      while (countMap[newName] !== undefined) {
+        countMap[name]++; // increment suffix until unique name is found
+        newName = `${name}(${countMap[name]})`;
+      }
+      
+      countMap[newName] = 1;
+      result.push(newName);
     }
-    counts[name] = (counts[name] || 0) + 1;
-    return name;
-  });
+  }
+  
+  return result;
 }
 
 module.exports = {
