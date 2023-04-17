@@ -1,5 +1,5 @@
 function minesweeper(matrix) {
-  сonst rows = matrix.length;
+  const rows = matrix.length;
   const cols = matrix[0].length;
   const result = [];
 
