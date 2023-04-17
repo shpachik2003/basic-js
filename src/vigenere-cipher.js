@@ -1,66 +1,82 @@
 class VigenereCipheringMachine {
-  constructor(isDirect = true) {
-    this.isDirect = isDirect;
+  constructor(direct = true) {
+    this.direct = direct;
   }
+
   encrypt(message, key) {
     if (!message || !key) {
       throw new Error('Incorrect arguments!');
     }
+    
+    const messageUpperCase = message.toUpperCase().replace(/[^A-Z]/g, '');
+    const keyUpperCase = key.toUpperCase().replace(/[^A-Z]/g, '');
+    const vigenereTable = this.createVigenereTable();
 
-    const upperCaseMessage = message.toUpperCase().replace(/[^A-Z]/g, '');
-    const upperCaseKey = key.toUpperCase().replace(/[^A-Z]/g, '');
-
-    let encrypted = '';
+    let result = '';
     let keyIndex = 0;
-    for (let i = 0; i < upperCaseMessage.length; i++) {
-      const charCode = upperCaseMessage.charCodeAt(i);
-      if (charCode >= 65 && charCode <= 90) {
-        const messageIndex = charCode - 65;
-        const keyCode = upperCaseKey.charCodeAt(keyIndex % upperCaseKey.length) - 65;
-        const encryptedCharCode = ((messageIndex + keyCode) % 26) + 65;
-        encrypted += String.fromCharCode(encryptedCharCode);
-        keyIndex++;
-      } else {
-        encrypted += upperCaseMessage[i];
+    for (let i = 0; i < messageUpperCase.length; i++) {
+      const messageCharCode = messageUpperCase.charCodeAt(i);
+      const keyCharCode = keyUpperCase.charCodeAt(keyIndex % keyUpperCase.length);
+      
+      if (messageCharCode < 65 || messageCharCode > 90) {
+        result += message[i];
+        continue;
       }
+
+      const encryptedCharCode = vigenereTable[messageCharCode - 65][keyCharCode - 65];
+      result += String.fromCharCode(encryptedCharCode);
+      keyIndex++;
     }
 
-    if (!this.isDirect) {
-      encrypted = encrypted.split('').reverse().join('');
-    }
-
-    return encrypted;
+    return this.direct ? result : result.split('').reverse().join('');
   }
-
 
   decrypt(encryptedMessage, key) {
     if (!encryptedMessage || !key) {
       throw new Error('Incorrect arguments!');
     }
 
-    const upperCaseMessage = encryptedMessage.toUpperCase().replace(/[^A-Z]/g, '');
-    const upperCaseKey = key.toUpperCase().replace(/[^A-Z]/g, '');
+    const encryptedMessageUpperCase = encryptedMessage.toUpperCase().replace(/[^A-Z]/g, '');
+    const keyUpperCase = key.toUpperCase().replace(/[^A-Z]/g, '');
+    const vigenereTable = this.createVigenereTable();
 
-    let decrypted = '';
+    let result = '';
     let keyIndex = 0;
-    for (let i = 0; i < upperCaseMessage.length; i++) {
-      const charCode = upperCaseMessage.charCodeAt(i);
-      if (charCode >= 65 && charCode <= 90) {
-        const messageIndex = charCode - 65;
-        const keyCode = upperCaseKey.charCodeAt(keyIndex % upperCaseKey.length) - 65;
-        const decryptedCharCode = ((messageIndex - keyCode + 26) % 26) + 65;
-        decrypted += String.fromCharCode(decryptedCharCode);
-        keyIndex++;
-      } else {
-        decrypted += upperCaseMessage[i];
+    for (let i = 0; i < encryptedMessageUpperCase.length; i++) {
+      const encryptedCharCode = encryptedMessageUpperCase.charCodeAt(i);
+      const keyCharCode = keyUpperCase.charCodeAt(keyIndex % keyUpperCase.length);
+      
+      if (encryptedCharCode < 65 || encryptedCharCode > 90) {
+        result += encryptedMessage[i];
+        continue;
+      }
+
+      const messageCharCode = this.findDecryptedCharCode(vigenereTable, encryptedCharCode, keyCharCode);
+      result += String.fromCharCode(messageCharCode);
+      keyIndex++;
+    }
+
+    return this.direct ? result : result.split('').reverse().join('');
+  }
+
+  createVigenereTable() {
+    const table = [];
+    for (let i = 0; i < 26; i++) {
+      const row = [];
+      for (let j = 0; j < 26; j++) {
+        row.push((i + j) % 26 + 65);
+      }
+      table.push(row);
+    }
+    return table;
+  }
+
+  findDecryptedCharCode(vigenereTable, encryptedCharCode, keyCharCode) {
+    for (let i = 0; i < 26; i++) {
+      if (vigenereTable[i][keyCharCode - 65] === encryptedCharCode) {
+        return i + 65;
       }
     }
-
-    if (!this.isDirect) {
-      decrypted = decrypted.split('').reverse().join('');
-    }
-
-    return decrypted;
   }
 }
 
