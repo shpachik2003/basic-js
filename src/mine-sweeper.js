@@ -1,21 +1,17 @@
 function minesweeper(matrix) {
-
+  let sum = 0;
+  for (let j = 0; j < matrix[0].length; j++){
+        sum += matrix[0][j]} 
   for (let i = 1; i < matrix.length; i++) {
-    let s = 0;
     for (let j = 0; j < matrix[i].length; j++){
-      s = s + matrix[i][j];
+        if (matrix[i-1][j] != 0){
+      sum += matrix[i][j];
+        }
     }
   }
-  return matrix[2][3];
-  console.log (matrix[2][3]);
+  return sum;
 }
 
-minesweeper( [
-    [0, 1, 1, 2],
-    [0, 5, 0, 0],
-    [2, 0, 3, 3]
-   
-]);
 
 
 module.exports = {
