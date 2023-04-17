@@ -1,15 +1,27 @@
 function minesweeper(matrix) {
-  let sum = 0;
-  for (let j = 0; j < matrix[0].length; j++){
-        sum += matrix[0][j]} 
-  for (let i = 1; i < matrix.length; i++) {
-    for (let j = 0; j < matrix[i].length; j++){
-        if (matrix[i-1][j] != 0){
-      sum += matrix[i][j];
+  сonst rows = matrix.length;
+  const cols = matrix[0].length;
+  const result = [];
+
+  for (let i = 0; i < rows; i++) {
+    result[i] = [];
+    for (let j = 0; j < cols; j++) {
+      let count = 0;
+
+      // Проверяем все 8 соседних ячеек
+      for (let r = Math.max(0, i - 1); r <= Math.min(rows - 1, i + 1); r++) {
+        for (let c = Math.max(0, j - 1); c <= Math.min(cols - 1, j + 1); c++) {
+          if (r !== i || c !== j) {
+            count += matrix[r][c] ? 1 : 0;
+          }
         }
+      }
+
+      result[i][j] = count;
     }
   }
-  return sum;
+
+  return result;
 }
 
 
