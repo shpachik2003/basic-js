@@ -1,9 +1,17 @@
 function getSeason(date) {
-    if (!date) {
+    if (date===undefined) {
       return 'Unable to determine the time of year!';
     }
     
-    if (Object.prototype.hasOwnProperty.call(date, 'getMonth')) {
+    try{
+      date.getMonth();
+    }
+    catch{
+      throw new Error('Invalid date!');
+    }
+
+    let awDate = new Date;
+    if (date.getMonth !== awDate.getMonth){
       throw new Error('Invalid date!');
     }
   
